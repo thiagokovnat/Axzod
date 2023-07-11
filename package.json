@@ -1,6 +1,6 @@
 {
   "name": "axzod",
-  "version": "1.0.9",
+  "version": "1.1.0",
   "description": "Axios with Zod-Powered validation",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
