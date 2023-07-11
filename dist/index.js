@@ -19,20 +19,20 @@ class Axzod {
     constructor(config) {
         this.axiosInstance = axios_1.default.create(config);
         if (config && config.logging) {
-            this.axiosInstance.interceptors.response.use(response => {
+            this.axiosInstance.interceptors.response.use((response) => {
                 var _a;
                 const status = response.status;
                 const request = response.config;
                 const method = (_a = request.method) === null || _a === void 0 ? void 0 : _a.toUpperCase();
-                const url = request.baseURL + request.url;
+                const url = (request.baseURL || "") + request.url;
                 console.debug(`[AXZOD]: HTTP ${method} ${url} ${status}`);
                 return response;
-            }, error => {
+            }, (error) => {
                 var _a, _b;
                 const status = (_a = error.response) === null || _a === void 0 ? void 0 : _a.status;
                 const request = error.config;
                 const method = (_b = request.method) === null || _b === void 0 ? void 0 : _b.toUpperCase();
-                const url = request.baseURL + request.url;
+                const url = (request.baseURL || "") + request.url;
                 console.error(`[AXZOD]: HTTP ${method} ${url} ${status}`);
                 return Promise.reject(error);
             });
@@ -41,10 +41,10 @@ class Axzod {
     get instance() {
         return this.axiosInstance;
     }
-    get(url, schema, headers = {}) {
+    get(url, schema, config) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const response = yield this.axiosInstance.get(url, { headers });
+                const response = yield this.axiosInstance.get(url, config);
                 const data = response.data;
                 const responseParsed = schema.safeParse(data);
                 if (!responseParsed.success) {
@@ -58,10 +58,10 @@ class Axzod {
             }
         });
     }
-    delete(url, schema, headers = {}) {
+    delete(url, schema, config) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const response = yield this.axiosInstance.delete(url, { headers });
+                const response = yield this.axiosInstance.delete(url, config);
                 const data = response.data;
                 const responseParsed = schema.safeParse(data);
                 if (!responseParsed.success) {
@@ -75,10 +75,10 @@ class Axzod {
             }
         });
     }
-    post(url, schema, body, headers = {}) {
+    post(url, schema, body, config) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const response = yield this.axiosInstance.post(url, body, { headers });
+                const response = yield this.axiosInstance.post(url, body, config);
                 const data = response.data;
                 const responseParsed = schema.safeParse(data);
                 if (!responseParsed.success) {
@@ -92,10 +92,27 @@ class Axzod {
             }
         });
     }
-    put(url, schema, body = {}, headers = {}) {
+    put(url, schema, body, config) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const response = yield this.axiosInstance.put(url, body, { headers });
+                const response = yield this.axiosInstance.put(url, body, config);
+                const data = response.data;
+                const responseParsed = schema.safeParse(data);
+                if (!responseParsed.success) {
+                    const error = (0, zod_validation_error_1.fromZodError)(responseParsed.error);
+                    return Promise.reject(error);
+                }
+                return responseParsed.data;
+            }
+            catch (error) {
+                return Promise.reject(error);
+            }
+        });
+    }
+    request(config, schema) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const response = yield this.axiosInstance.request(config);
                 const data = response.data;
                 const responseParsed = schema.safeParse(data);
                 if (!responseParsed.success) {

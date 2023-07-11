@@ -1,4 +1,4 @@
-import { AxiosInstance, CreateAxiosDefaults } from "axios";
+import { AxiosInstance, AxiosRequestConfig, CreateAxiosDefaults } from "axios";
 import { z } from "zod";
 export interface AxzodInstance {
     instance: AxiosInstance;
@@ -9,5 +9,7 @@ export interface AxzodInstance {
 }
 export interface CreateAxzodDefaults extends CreateAxiosDefaults {
     logging?: boolean;
+}
+export interface AxzodRequestConfig extends AxiosRequestConfig {
 }
 export declare const createAxzod: (config?: CreateAxzodDefaults) => AxzodInstance;
